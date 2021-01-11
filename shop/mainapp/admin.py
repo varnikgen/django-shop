@@ -32,7 +32,7 @@ class MixerAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Bath, BathAdmin)
-admin.site.register(Mixer)
-admin.site.register(CartProduct, MixerAdmin)
+admin.site.register(Mixer, MixerAdmin)
+admin.site.register(CartProduct)
 admin.site.register(Cart)
 admin.site.register(Customer)
