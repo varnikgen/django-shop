@@ -90,7 +90,7 @@ class Product(models.Model):
         if img.height > max_height or img.width > max_width:
             print(max_height, max_width)
             raise MaxResolutionErrorException('Разрешение изображения не соответствуе максимально разрешённому: 800х800')
-        return image
+        super().save(*args, **kwargs)
 
     class Meta:
         abstract = True
