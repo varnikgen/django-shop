@@ -16,23 +16,23 @@ class BathAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['image'].help_text = mark_safe(
-            '<span style="color:red; font-size:14px;">Загружайте изображение с разрешением не менее {}x{}</span>'.format(
-                *Product.MIN_RESOLUTION)
+            """<span style="color:red; font-size:14px;">Изображение разрешением больше {}x{} будет сжато</span>
+            """.format(*Product.MAX_RESOLUTION)
         )
 
-    def clean_image(self):
-        image = self.cleaned_data['image']
-        img = Image.open(image)
-        min_height, min_width = Product.MIN_RESOLUTION
-        max_height, max_width = Product.MAX_RESOLUTION
-        if image.size > Product.MAX_IMAGE_SIZE:
-            raise ValidationError('Размер изображения превышает 3МБ')
-        if min_width > img.width or min_height > img.height:
-            raise ValidationError('Разрешение изображения не соответствуе минимально разрешённому: 300х300')
-        if img.height > max_height or img.width > max_width:
-            print(max_height, max_width)
-            raise ValidationError('Разрешение изображения не соответствуе максимально разрешённому: 800х800')
-        return image
+    # def clean_image(self):
+    #     image = self.cleaned_data['image']
+    #     img = Image.open(image)
+    #     min_height, min_width = Product.MIN_RESOLUTION
+    #     max_height, max_width = Product.MAX_RESOLUTION
+    #     if image.size > Product.MAX_IMAGE_SIZE:
+    #         raise ValidationError('Размер изображения превышает 3МБ')
+    #     if min_width > img.width or min_height > img.height:
+    #         raise ValidationError('Разрешение изображения не соответствуе минимально разрешённому: 300х300')
+    #     if img.height > max_height or img.width > max_width:
+    #         print(max_height, max_width)
+    #         raise ValidationError('Разрешение изображения не соответствуе максимально разрешённому: 800х800')
+    #     return image
 
 
 
