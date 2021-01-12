@@ -1,3 +1,5 @@
+from PIL import Image
+
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -5,6 +7,14 @@ from django.db import models
 
 
 User = get_user_model()
+
+
+class MinResolutionErrorException(Exception):
+    pass
+
+
+class MaxResolutionErrorException(Exception):
+    pass
 
 
 class LatestProductsManager:
@@ -54,6 +64,11 @@ class Product(models.Model):
     """
     Модель товара
     """
+
+    MIN_RESOLUTION = (300, 300)
+    MAX_RESOLUTION = (800, 800)
+    MAX_IMAGE_SIZE = 3145728
+
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
     title = models.CharField(max_length=255, verbose_name='Наименование')
     slug = models.SlugField(unique=True)
@@ -63,6 +78,19 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        """ Метод сохранения модели в базе с учётом ограничений изображени """
+        image = self.image
+        img = Image.open(image)
+        min_height, min_width = self.MIN_RESOLUTION
+        max_height, max_width = self.MAX_RESOLUTION
+        if min_width > img.width or min_height > img.height:
+            raise MinResolutionErrorException('Разрешение изображения не соответствуе минимально разрешённому: 300х300')
+        if img.height > max_height or img.width > max_width:
+            print(max_height, max_width)
+            raise MaxResolutionErrorException('Разрешение изображения не соответствуе максимально разрешённому: 800х800')
+        return image
 
     class Meta:
         abstract = True

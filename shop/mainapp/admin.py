@@ -1,7 +1,8 @@
+from PIL import Image
+
 from django.forms import ModelChoiceField, ModelForm, ValidationError
 from django.contrib import admin
-
-from PIL import Image
+from django.utils.safestring import mark_safe
 
 from .models import *
 
@@ -12,18 +13,25 @@ class BathAdminForm(ModelForm):
     MIN_RESOLUTION - минимальное разрешение для изображений товара
     """
     
-    MIN_RESOLUTION = (300, 300)
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['image'].help_text = 'Загружайте изображение с разрешением не менее {}x{}'.format(*self.MIN_RESOLUTION)
+        self.fields['image'].help_text = mark_safe(
+            '<span style="color:red; font-size:14px;">Загружайте изображение с разрешением не менее {}x{}</span>'.format(
+                *Product.MIN_RESOLUTION)
+        )
 
     def clean_image(self):
         image = self.cleaned_data['image']
         img = Image.open(image)
-        min_height, min_width = self.MIN_RESOLUTION
+        min_height, min_width = Product.MIN_RESOLUTION
+        max_height, max_width = Product.MAX_RESOLUTION
+        if image.size > Product.MAX_IMAGE_SIZE:
+            raise ValidationError('Размер изображения превышает 3МБ')
         if min_width > img.width or min_height > img.height:
-            raise ValidationError('картинка маленькая')
+            raise ValidationError('Разрешение изображения не соответствуе минимально разрешённому: 300х300')
+        if img.height > max_height or img.width > max_width:
+            print(max_height, max_width)
+            raise ValidationError('Разрешение изображения не соответствуе максимально разрешённому: 800х800')
         return image
 
 
