@@ -1,13 +1,30 @@
-from django.forms import ModelChoiceField
+from django.forms import ModelChoiceField, ModelForm
 from django.contrib import admin
 
 from .models import *
+
+
+class BathAdminForm(ModelForm):
+    """
+    Класс формы раздела ванн в админке
+    MIN_RESOLUTION - минимальное разрешение для изображений товара
+    """
+    
+    MIN_RESOLUTION = (400, 400)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.fields['image'].help_text = 'Загружайте изображение с разрешением не менее {}x{}'.format(
+            *self.MIN_RESOLUTION
+        )
 
 
 class BathAdmin(admin.ModelAdmin):
     """
     Класс представляющий ванны в админке
     """
+    form = BathAdminForm
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """
         Метод оставляет возможность в админке в ваннах выбирать только категорию Ванны

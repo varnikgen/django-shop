@@ -14,7 +14,7 @@ class LatestProductsManager:
     @staticmethod
     def get_products_for_main_page(*args, **kwargs):
         """
-        метод получает обекты класса товара указанного в аргументах метода
+        метод получает объекты класса товара указанного в аргументах метода
         """
         with_respect_to = kwargs.get('with_respect_to')
         products = []
