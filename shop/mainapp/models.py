@@ -1,18 +1,16 @@
-import sys
-
-from PIL import Image
-
-from io import BytesIO
-
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
-from django.db.models.fields import files
+from django.urls import reverse
 
 
 User = get_user_model()
+
+
+def get_product_url(object, viewname):
+    ct_model = object.__class__._meta.model_name
+    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug': object.slug})
 
 
 class MinResolutionErrorException(Exception):
@@ -85,30 +83,6 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        """ Метод сохранения модели в базе с учётом ограничений изображени """
-        # image = self.image
-        # img = Image.open(image)
-        # min_height, min_width = self.MIN_RESOLUTION
-        # max_height, max_width = self.MAX_RESOLUTION
-        # if min_width > img.width or min_height > img.height:
-        #     raise MinResolutionErrorException('Разрешение изображения не соответствуе минимально разрешённому: 300х300')
-        # if img.height > max_height or img.width > max_width:
-        #     print(max_height, max_width)
-        #     raise MaxResolutionErrorException('Разрешение изображения не соответствуе максимально разрешённому: 800х800')
-        image = self.image
-        img = Image.open(image)
-        new_img = img.convert('RGB')
-        resize_new_img = new_img.resize((200, 200), Image.ANTIALIAS)
-        filestream = BytesIO()
-        resize_new_img.save(filestream, 'JPEG', quality=90)
-        filestream.seek(0)
-        name = '{}.{}'.format(*self.image.name.split('.'))
-        self.image = InMemoryUploadedFile(
-            filestream, 'ImageField', name, 'jpeg/image', sys.getsizeof(filestream), None
-        )
-        super().save(*args, **kwargs)
-
     class Meta:
         abstract = True
 
@@ -169,6 +143,9 @@ class Bath(Product):
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
 
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
 
 class Mixer(Product):
     """
@@ -182,4 +159,6 @@ class Mixer(Product):
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
-
+    
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
