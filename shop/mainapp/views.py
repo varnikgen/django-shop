@@ -10,7 +10,7 @@ def test_view(request):
 
 class ProductDetailView(DetailView):
     """
-    docstring
+    Класс для представления всех продуктовых классов из моделей в одном шаблоне
     """
     CT_MODEL_MODEL_CLASS = {
         'bath': Bath,
