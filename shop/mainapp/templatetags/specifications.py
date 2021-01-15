@@ -43,6 +43,6 @@ def get_product_spec(product, model_name):
 
 @register.filter
 def product_spec (product, arg):
-    print(arg, 'arg_value')
+    print(arg, 'arg_value') # Пример передачи дополнительного аргумента
     model_name = product.__class__._meta.model_name
     return mark_safe(TABLE_HEAD + get_product_spec(product, model_name) + TABLE_TAIL)
