@@ -4,13 +4,12 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.urls import reverse
 
-
 User = get_user_model()
 
 
-def get_product_url(object, viewname):
-    ct_model = object.__class__._meta.model_name
-    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug': object.slug})
+def get_product_url(obj, viewname):
+    ct_model = obj.__class__._meta.model_name
+    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug': obj.slug})
 
 
 class MinResolutionErrorException(Exception):
@@ -25,6 +24,7 @@ class LatestProductsManager:
     """
     Класс получает список последних продуктов товаров
     """
+
     @staticmethod
     def get_products_for_main_page(*args, **kwargs):
         """
@@ -32,7 +32,7 @@ class LatestProductsManager:
         """
         with_respect_to = kwargs.get('with_respect_to')
         products = []
-        ct_models = ContentType.objects.filter(model__in = args)
+        ct_models = ContentType.objects.filter(model__in=args)
         for ct_model in ct_models:
             model_products = ct_model.model_class()._base_manager.all().order_by('-id')[:5]
             products.extend(model_products)
@@ -130,9 +130,6 @@ class Customer(models.Model):
         return "Покупатель: {} {}".format(self.user.first_name, self.user.last_name)
 
 
-
-
-
 # Типы продуктов
 class Bath(Product):
     """
@@ -141,7 +138,7 @@ class Bath(Product):
     material = models.CharField(max_length=50, verbose_name='Материал')
     length = models.PositiveIntegerField(verbose_name='Длинна')
     width = models.PositiveIntegerField(verbose_name='Ширина')
-    
+
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
 
@@ -161,6 +158,6 @@ class Mixer(Product):
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
-    
+
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
