@@ -1,6 +1,8 @@
 from django import template
 from django.utils.safestring import mark_safe
 
+from mainapp.models import Mixer
+
 
 register = template.Library()
 
@@ -30,6 +32,8 @@ PRODUCT_SPEC = {
         'Цвет': 'color',
         'Материал': 'material',
         'Монтаж': 'mounting',
+        'Наличие душа': 'shower',
+        'Тип душа': 'type_shower',
     },
 }
 
@@ -42,7 +46,12 @@ def get_product_spec(product, model_name):
 
 
 @register.filter
-def product_spec (product, arg):
-    print(arg, 'arg_value') # Пример передачи дополнительного аргумента
+def product_spec(product): #(product, arg):
+    # print(arg, 'arg_value') # Пример передачи дополнительного аргумента
     model_name = product.__class__._meta.model_name
+    if isinstance(product, Mixer):
+        if not product.shower:
+            PRODUCT_SPEC['mixer'].pop('Тип душа')
+        else:
+            PRODUCT_SPEC['mixer']['Тип душа'] = 'type_shower'
     return mark_safe(TABLE_HEAD + get_product_spec(product, model_name) + TABLE_TAIL)

@@ -1,0 +1,21 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script>
+    (function($) {
+        $('#id_shower').on('click', function(){
+            if($('#id_shower').prop('checked') == true){
+                $('#id_type_shower').prop('readonly', false)
+                $('#id_type_shower').val('')
+                $('#id_type_shower').css('background', 'white')
+            } else{
+                $('#id_type_shower').prop('readonly', true)
+                $('#id_type_shower').val('')
+                $('#id_type_shower').css('background', 'lightgray')
+            }
+        })
+    })(django.jQuery);
+</script>
+{% endblock %}

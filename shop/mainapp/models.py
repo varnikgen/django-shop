@@ -145,6 +145,12 @@ class Bath(Product):
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
 
+    # @property
+    # def shower(self):
+    #     if self.shower:
+    #         return 'Да'
+    #     return 'Нет'
+
 
 class Mixer(Product):
     """
@@ -155,6 +161,10 @@ class Mixer(Product):
     color = models.CharField(max_length=50, verbose_name='Цвет')
     material = models.CharField(max_length=50, verbose_name='Материал')
     mounting = models.CharField(max_length=50, verbose_name='Монтаж')
+    # Для теста и обзора
+    shower = models.BooleanField(default=False, verbose_name='Наличие душа')
+    type_shower = models.CharField(max_length=150, null=True, blank=True, verbose_name='Тип душа')
+    # ==================
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
