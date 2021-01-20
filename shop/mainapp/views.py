@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import DetailView, View
 
-from .models import Bath, Mixer, Category
+from .models import Bath, Mixer, Category, LatestProducts
 from .mixins import CategoryDetailMixin
 
 
@@ -11,12 +11,14 @@ class BaseView(View):
     """
     def get(self, request, *args, **kwargs):
         categories = Category.objects.get_categories_for_left_sidebar()
-        return render(request, 'base.html', {'categories': categories})
-
-
-# def test_view(request):
-#     categories = Category.objects.get_categories_for_left_sidebar()
-#     return render(request, 'base.html', {'categories': categories})
+        products = LatestProducts.objects.get_products_for_main_page(
+            'bath', 'mixer', with_respect_to='mixer'
+        )
+        context = {
+            'categories': categories,
+            'products': products,
+        }
+        return render(request, 'base.html', context)
 
 
 class ProductDetailView(CategoryDetailMixin, DetailView):
