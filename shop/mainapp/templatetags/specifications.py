@@ -41,6 +41,7 @@ PRODUCT_SPEC = {
 def get_product_spec(product, model_name):
     table_content = ''
     for name, value in PRODUCT_SPEC[model_name].items():
+        # тут можно вмешаться в вывод характеристик
         table_content += TABLE_CONTENT.format(name=name, value=getattr(product, value))
     return table_content
 
@@ -50,8 +51,6 @@ def product_spec(product): #(product, arg):
     # print(arg, 'arg_value') # Пример передачи дополнительного аргумента
     model_name = product.__class__._meta.model_name
     if isinstance(product, Mixer):
-        print(product.shower)
-        print(PRODUCT_SPEC['mixer'].get('Тип душа'))
         if not product.shower:
             if PRODUCT_SPEC['mixer'].get('Тип душа'):
                 PRODUCT_SPEC['mixer'].pop('Тип душа')
