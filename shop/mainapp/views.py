@@ -77,6 +77,22 @@ class AddToCartView(CartMixin, View):
         return HttpResponseRedirect('/cart/')
 
 
+class DeleteFromCartView(CartMixin, View):
+    """
+    Удаление товаров из корзины
+    """
+    def get(self, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'), kwargs.get('slug')
+        content_type = ContentType.objects.get(model=ct_model)
+        product = content_type.model_class().objects.get(slug=product_slug)
+        cart_product = CartProduct.objects.get(
+            user=self.cart.owner, cart=self.cart, content_type=content_type, object_id=product.id
+        )
+        self.cart.products.remove(cart_product)
+        self.cart.save()
+        return HttpResponseRedirect('/cart/')
+
+
 class CartView(CartMixin, View):
     """
     Класс представления корзины
