@@ -41,3 +41,18 @@ class BathSerializer(BaseProductSerializer, serializers.ModelSerializer):
         model = Bath
         fields = '__all__'
 
+
+# class OrderSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = Order
+#         fields = '__all__'
+
+
+# class CustomerSerializer(serializers.ModelSerializer):
+
+#     orders = OrderSerializer(many=True)
+
+#     class Meta:
+#         model = Customer
+#         fields = '__all__'
