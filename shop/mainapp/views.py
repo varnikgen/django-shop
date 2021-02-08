@@ -7,7 +7,7 @@ from django.views.generic import DetailView, View
 
 from .models import Category, Customer, Cart, CartProduct, Product
 from .mixins import CartMixin
-from .forms import OrderForm
+from .forms import OrderForm, LoginForm
 from .utils import recalc_cart
 
 
@@ -162,3 +162,14 @@ class MakeOrderView(CartMixin, View):
             messages.add_message(request, messages.INFO, 'Спасибо за заказ! В ближайшее время мы с вами свяжемся.')
             return HttpResponseRedirect('/')
         return HttpResponseRedirect('/checkout/')
+
+
+class LoginView(CartMixin, View):
+    """
+    Отображение входа в систему
+    """
+    def get(self, request, *args, **kwargs):
+        form = LoginForm(request.POST or None)
+        categories = Category.objects.all()
+        context = {'form': form, 'categories': categories, 'cart': self.cart}
+        return render(request, 'login.html', context)
