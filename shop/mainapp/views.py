@@ -229,8 +229,5 @@ class ProfileView(CartMixin, View):
         customer = Customer.objects.get(user=request.user)
         orders = Order.objects.filter(customer=customer).order_by('-created_at')
         categories = Category.objects.all()
-        return render(
-            request,
-            'profile.html',
-            {'orders': orders, 'cart': self.cart, 'categories': categories}
-        )
+        context = {'orders': orders, 'categories': categories, 'cart': self.cart}
+        return render(request, 'profile.html', context)
